@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlobalTalent | 整合平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    html, body { max-width: 100%; overflow-x: hidden; }
+    body { font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .view { display: none; }
+    .view.active { display: block; }
+    .nav-btn.active, .side-btn.active { background: #eff6ff; color: #2563eb; font-weight: 900; }
+    .role-tab.active { background: #0f172a; color: #fff; }
+    .panel { border: 1px solid #e2e8f0; background: #fff; border-radius: .75rem; }
+    .metric { border: 1px solid #e2e8f0; background: #fff; border-radius: .75rem; padding: 1.25rem; }
+    .overflow-x-auto { max-width: 100%; }
+    .phone-shell { border-radius: 2rem; border: 10px solid #0f172a; box-shadow: 0 28px 70px rgba(15, 23, 42, .18); overflow: hidden; }
+    .tier-gold { background: linear-gradient(135deg, #fef3c7, #f59e0b); color: #78350f; }
+    .tier-silver { background: linear-gradient(135deg, #f8fafc, #cbd5e1); color: #334155; }
+    .tier-bronze { background: linear-gradient(135deg, #ffedd5, #c2410c); color: #fff7ed; }
+  </style>
+</head>
+<body class="min-h-screen overflow-x-hidden bg-slate-50 text-slate-800 antialiased">
+  <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <button onclick="showView('home')" class="flex items-center gap-3" aria-label="GlobalTalent 首頁">
+        <span class="grid h-9 w-9 place-items-center rounded-lg bg-blue-600 text-white"><i class="fa-solid fa-globe"></i></span>
+        <span class="text-xl font-black tracking-wide text-slate-900">Global<span class="text-blue-600">Talent</span></span>
+      </button>
+
+      <nav class="hidden items-center gap-1 lg:flex">
+        <button class="nav-btn active rounded-lg px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100" data-view="home" onclick="showView('home')">前台首頁</button>
+        <button class="nav-btn rounded-lg px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100" data-view="jobs" onclick="showView('jobs')">找工作</button>
+        <button class="nav-btn rounded-lg px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100" data-view="worker" onclick="showView('worker')">會員平台</button>
+        <button class="nav-btn rounded-lg px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100" data-view="employer" onclick="showView('employer')">雇主後台</button>
+        <button class="nav-btn rounded-lg px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100" data-view="admin" onclick="showView('admin')">管理員後台</button>
+      </nav>
+
+      <div class="hidden items-center gap-3 md:flex">
+        <span class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-black text-slate-600">雇主點數 <span id="header-points" class="text-blue-600">120</span>P</span>
+        <select id="language-select" onchange="setLanguage(this.value)" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 outline-none focus:border-blue-500" aria-label="Language">
+          <option value="zh-Hant">繁體中文</option>
+          <option value="en">English</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="fil">Filipino</option>
+          <option value="th">ไทย</option>
+          <option value="hi">हिन्दी</option>
+        </select>
+        <button onclick="openPricingModal()" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-black text-white hover:bg-blue-500">購買點數</button>
+      </div>
+
+      <button id="mobile-menu-btn" class="grid h-10 w-10 place-items-center rounded-lg border border-slate-200 text-slate-700 lg:hidden" aria-label="開啟選單">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden border-t border-slate-200 bg-white px-4 py-3 lg:hidden">
+      <div class="grid gap-2">
+        <button class="nav-btn active rounded-lg px-4 py-3 text-left text-sm font-bold text-slate-600" data-view="home" onclick="showView('home'); closeMobileMenu()">前台首頁</button>
+        <button class="nav-btn rounded-lg px-4 py-3 text-left text-sm font-bold text-slate-600" data-view="jobs" onclick="showView('jobs'); closeMobileMenu()">找工作</button>
+        <button class="nav-btn rounded-lg px-4 py-3 text-left text-sm font-bold text-slate-600" data-view="worker" onclick="showView('worker'); closeMobileMenu()">會員平台</button>
+        <button class="nav-btn rounded-lg px-4 py-3 text-left text-sm font-bold text-slate-600" data-view="employer" onclick="showView('employer'); closeMobileMenu()">雇主後台</button>
+        <button class="nav-btn rounded-lg px-4 py-3 text-left text-sm font-bold text-slate-600" data-view="admin" onclick="showView('admin'); closeMobileMenu()">管理員後台</button>
+        <button onclick="openPricingModal(); closeMobileMenu()" class="rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-black text-white">購買點數</button>
+        <select id="mobile-language-select" onchange="setLanguage(this.value); closeMobileMenu()" class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 outline-none focus:border-blue-500" aria-label="Language">
+          <option value="zh-Hant">繁體中文</option>
+          <option value="en">English</option>
+          <option value="id">Bahasa Indonesia</option>
+          <option value="fil">Filipino</option>
+          <option value="th">ไทย</option>
+          <option value="hi">हिन्दी</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="view-home" class="view active">
+      <div class="relative overflow-hidden bg-slate-950 text-white">
+        <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1800&q=82" alt="外籍人才媒合" class="absolute inset-0 h-full w-full object-cover opacity-30" />
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-900/45"></div>
+        <div class="relative mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:px-8 lg:py-20">
+          <div class="flex flex-col justify-center">
+            <span class="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-blue-300/30 bg-blue-500/15 px-3 py-1.5 text-xs font-bold text-blue-100">
+              <i class="fa-solid fa-shield-halved"></i> 前台、會員、雇主後台、管理員後台整合
+            </span>
+            <h1 class="max-w-3xl text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">外籍人才媒合與後台管理一份 HTML 完成</h1>
+            <p class="mt-5 max-w-2xl text-base leading-8 text-slate-200 sm:text-lg">雇主可購買點數、刊登職缺、搜尋人才並解鎖完整履歷；管理員可審核會員、職缺與交易紀錄。</p>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+              <button onclick="showView('jobs')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-500 px-6 py-3 text-sm font-black text-white hover:bg-emerald-400"><i class="fa-solid fa-magnifying-glass"></i> 我要找工作</button>
+              <button onclick="showView('employer')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-black text-white hover:bg-blue-500"><i class="fa-solid fa-building"></i> 進入雇主後台</button>
+              <button onclick="showView('admin')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-black text-slate-900 hover:bg-slate-100"><i class="fa-solid fa-user-shield"></i> 管理員後台</button>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-white/15 bg-white/95 p-5 text-slate-900 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+              <div>
+                <p class="text-xs font-black uppercase tracking-widest text-blue-600">Employer Wallet</p>
+                <h2 class="mt-1 text-xl font-black">雇主點數中心</h2>
+              </div>
+              <span class="rounded-lg bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">可解鎖履歷</span>
+            </div>
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="rounded-lg border border-slate-200 p-4"><p class="text-xs font-bold text-slate-500">目前點數</p><p class="mt-2 text-3xl font-black text-blue-600"><span id="hero-points">120</span>P</p></div>
+              <div class="rounded-lg border border-slate-200 p-4"><p class="text-xs font-bold text-slate-500">單次解鎖</p><p class="mt-2 text-3xl font-black text-slate-900">50P</p></div>
+              <div class="rounded-lg border border-slate-200 p-4"><p class="text-xs font-bold text-slate-500">已解鎖</p><p class="mt-2 text-3xl font-black text-slate-900"><span id="hero-unlocks">0</span></p></div>
+              <div class="rounded-lg border border-slate-200 p-4"><p class="text-xs font-bold text-slate-500">待審職缺</p><p class="mt-2 text-3xl font-black text-slate-900">3</p></div>
+            </div>
+            <button onclick="openPricingModal()" class="mt-5 w-full rounded-lg bg-blue-600 px-5 py-3 text-sm font-black text-white hover:bg-blue-500">購買更多點數</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div class="grid gap-4 md:grid-cols-3">
+          <article class="panel p-5"><div class="mb-4 grid h-11 w-11 place-items-center rounded-lg bg-blue-50 text-blue-600"><i class="fa-solid fa-users-viewfinder"></i></div><h3 class="text-lg font-black">人才搜尋</h3><p class="mt-2 text-sm leading-7 text-slate-600">履歷列表預設遮罩敏感資料，雇主扣點後才能查看完整履歷與聯絡方式。</p></article>
+          <article class="panel p-5"><div class="mb-4 grid h-11 w-11 place-items-center rounded-lg bg-emerald-50 text-emerald-600"><i class="fa-solid fa-briefcase"></i></div><h3 class="text-lg font-black">職缺刊登</h3><p class="mt-2 text-sm leading-7 text-slate-600">雇主可建立職缺，管理員審核後上架，維持資訊品質。</p></article>
+          <article class="panel p-5"><div class="mb-4 grid h-11 w-11 place-items-center rounded-lg bg-amber-50 text-amber-600"><i class="fa-solid fa-user-shield"></i></div><h3 class="text-lg font-black">管理員稽核</h3><p class="mt-2 text-sm leading-7 text-slate-600">會員、職缺、交易、檢舉與客服任務集中在管理員後台。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-jobs" class="view">
+      <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-5 panel p-5">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p class="text-xs font-black uppercase tracking-widest text-blue-600">Job Search</p>
+              <h1 class="mt-2 text-3xl font-black text-slate-950">找工作</h1>
+              <p class="mt-2 text-sm leading-7 text-slate-600">搜尋合法職缺，依工作類型、地區、薪資與住宿條件快速篩選。</p>
+            </div>
+            <button onclick="showView('worker')" class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-black text-white hover:bg-blue-500"><i class="fa-solid fa-file-arrow-up mr-2"></i>建立履歷</button>
+          </div>
+        </div>
+
+        <section class="panel mb-5 p-4">
+          <div class="grid gap-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
+            <label class="relative">
+              <span class="sr-only">搜尋關鍵字</span>
+              <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input id="job-keyword" type="search" placeholder="搜尋職缺、公司或技能" class="w-full rounded-lg border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none focus:border-blue-500" oninput="renderJobs()" />
+            </label>
+            <select id="job-type-filter" class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500" onchange="renderJobs()">
+              <option value="">全部工種</option>
+              <option value="家庭看護">家庭看護</option>
+              <option value="製造業">製造業</option>
+              <option value="餐飲服務">餐飲服務</option>
+              <option value="營造業">營造業</option>
+            </select>
+            <select id="job-location-filter" class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500" onchange="renderJobs()">
+              <option value="">全部地區</option>
+              <option value="台北">台北</option>
+              <option value="桃園">桃園</option>
+              <option value="台中">台中</option>
+              <option value="高雄">高雄</option>
+            </select>
+            <select id="job-housing-filter" class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500" onchange="renderJobs()">
+              <option value="">住宿不限</option>
+              <option value="提供住宿">提供住宿</option>
+              <option value="不提供住宿">不提供住宿</option>
+            </select>
+            <button onclick="renderJobs(); openToast('已更新工作搜尋結果')" class="rounded-lg bg-slate-900 px-5 py-3 text-sm font-black text-white hover:bg-slate-700">搜尋</button>
+          </div>
+        </section>
+
+        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-sm font-bold text-slate-600">符合條件：<span id="job-result-count" class="text-blue-600">0</span> 筆職缺</p>
+          <div class="flex flex-wrap gap-2 text-xs font-bold text-slate-500">
+            <span class="rounded-full bg-white px-3 py-1.5 ring-1 ring-slate-200">合法審核</span>
+            <span class="rounded-full bg-white px-3 py-1.5 ring-1 ring-slate-200">薪資透明</span>
+            <span class="rounded-full bg-white px-3 py-1.5 ring-1 ring-slate-200">可一鍵投遞</span>
+          </div>
+        </div>
+
+        <div id="job-list" class="space-y-4"></div>
+      </div>
+    </section>
+
+    <section id="view-instant" class="view">
+      <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-5 panel overflow-hidden bg-slate-950 text-white">
+          <div class="grid gap-8 p-5 lg:grid-cols-[1fr_380px] lg:p-8">
+            <div class="flex flex-col justify-center">
+              <span class="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1.5 text-xs font-black text-emerald-100">
+                <i class="fa-solid fa-bolt"></i> TempGo 即時派工
+              </span>
+              <h1 class="text-4xl font-black leading-tight lg:text-5xl">像叫車一樣，立即媒合附近臨時工</h1>
+              <p class="mt-4 max-w-2xl text-sm leading-7 text-slate-300">雇主今天缺人時可立即提出需求與報酬，系統依距離、會員階級與在線狀態自動推播給附近臨時工。工人可一鍵投簡歷，雇主即時審核錄取。</p>
+              <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                <div class="rounded-xl bg-white/10 p-4"><p class="text-xs font-bold text-slate-300">平均媒合</p><p class="mt-1 text-2xl font-black">8 分鐘</p></div>
+                <div class="rounded-xl bg-white/10 p-4"><p class="text-xs font-bold text-slate-300">附近在線</p><p class="mt-1 text-2xl font-black"><span id="instant-online-count">0</span> 人</p></div>
+                <div class="rounded-xl bg-white/10 p-4"><p class="text-xs font-bold text-slate-300">今日派工</p><p class="mt-1 text-2xl font-black"><span id="instant-job-count">1</span> 單</p></div>
+              </div>
+            </div>
+
+            <div class="phone-shell bg-slate-100 text-slate-900">
+              <div class="bg-slate-950 px-5 pb-4 pt-3 text-white">
+                <div class="mx-auto mb-3 h-1.5 w-24 rounded-full bg-slate-700"></div>
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-xs font-bold text-emerald-300">Worker App</p>
+                    <h2 class="text-lg font-black">附近即時工作</h2>
+                  </div>
+                  <span class="rounded-full bg-emerald-400 px-3 py-1 text-xs font-black text-slate-950">ONLINE</span>
+                </div>
+              </div>
+              <div class="space-y-3 p-4">
+                <div class="rounded-2xl bg-white p-4 shadow-sm">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p class="text-xs font-black text-emerald-600">新任務推播</p>
+                      <h3 id="phone-job-title" class="mt-1 font-black">信義區活動撤場人員</h3>
+                      <p id="phone-job-pay" class="mt-1 text-sm font-bold text-slate-500">NT$ 1,600 / 4 小時</p>
+                    </div>
+                    <span class="rounded-lg bg-amber-50 px-2 py-1 text-xs font-black text-amber-700">金卡優先</span>
+                  </div>
+                  <button onclick="quickApplyFromPhone()" class="mt-4 w-full rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white">立即投簡歷</button>
+                </div>
+                <div id="phone-worker-feed" class="space-y-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid gap-5 xl:grid-cols-[380px_1fr]">
+          <aside class="space-y-5">
+            <form class="panel" onsubmit="createInstantJob(event)">
+              <div class="border-b border-slate-200 px-5 py-4">
+                <h2 class="text-lg font-black">雇主立即發單</h2>
+                <p class="mt-1 text-sm text-slate-500">填入今天需要的人數、時間與報酬，系統會自動推播附近工人。</p>
+              </div>
+              <div class="grid gap-4 p-5">
+                <label class="grid gap-1 text-sm font-bold text-slate-600">需求名稱<input id="instant-title" required value="信義區活動撤場人員" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+                <div class="grid grid-cols-2 gap-3">
+                  <label class="grid gap-1 text-sm font-bold text-slate-600">人數<input id="instant-headcount" type="number" min="1" value="3" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+                  <label class="grid gap-1 text-sm font-bold text-slate-600">時數<input id="instant-hours" type="number" min="1" value="4" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+                </div>
+                <label class="grid gap-1 text-sm font-bold text-slate-600">單人報酬<input id="instant-pay" required value="1600" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+                <label class="grid gap-1 text-sm font-bold text-slate-600">集合地點<input id="instant-location" required value="台北市信義區" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+                <label class="grid gap-1 text-sm font-bold text-slate-600">需求技能<select id="instant-skill" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500"><option>活動撤場</option><option>倉儲搬運</option><option>餐飲支援</option><option>清潔打掃</option><option>展場人員</option></select></label>
+              </div>
+              <div class="border-t border-slate-200 bg-slate-50 px-5 py-4">
+                <button class="w-full rounded-lg bg-emerald-600 px-5 py-3 text-sm font-black text-white hover:bg-emerald-500"><i class="fa-solid fa-paper-plane mr-2"></i>立即發送給附近工人</button>
+              </div>
+            </form>
+
+            <section class="panel p-5">
+              <h2 class="text-lg font-black">會員階級與價格</h2>
+              <p class="mt-1 text-sm text-slate-500">階級會影響推播優先順序與是否免排隊接單。</p>
+              <div class="mt-4 space-y-3">
+                <div class="rounded-xl border border-orange-200 p-4"><div class="flex items-center justify-between"><span class="tier-bronze rounded-lg px-2 py-1 text-xs font-black">銅卡</span><span class="font-black">工人 NT$199/月</span></div><p class="mt-2 text-sm text-slate-600">一般推播，排隊接單。</p></div>
+                <div class="rounded-xl border border-slate-300 p-4"><div class="flex items-center justify-between"><span class="tier-silver rounded-lg px-2 py-1 text-xs font-black">銀卡</span><span class="font-black">工人 NT$399/月</span></div><p class="mt-2 text-sm text-slate-600">提早 3 分鐘收到工作，排隊順位提高。</p></div>
+                <div class="rounded-xl border border-amber-300 p-4"><div class="flex items-center justify-between"><span class="tier-gold rounded-lg px-2 py-1 text-xs font-black">金卡</span><span class="font-black">工人 NT$699/月</span></div><p class="mt-2 text-sm text-slate-600">最優先推播，免排隊快速投遞。</p></div>
+                <div class="rounded-xl border border-blue-200 bg-blue-50 p-4"><p class="font-black text-blue-900">雇主方案</p><p class="mt-2 text-sm text-blue-800">銅卡 NT$599/月、銀卡 NT$1,299/月、金卡 NT$2,999/月。階級越高，發單推播半徑更大、可優先查看投遞者。</p></div>
+              </div>
+            </section>
+          </aside>
+
+          <div class="space-y-5">
+            <section class="panel p-5">
+              <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h2 class="text-lg font-black">附近在線臨時工</h2>
+                  <p class="mt-1 text-sm text-slate-500">系統依會員階級、距離、評分與在線狀態排序自動派送。</p>
+                </div>
+                <button onclick="autoDispatchInstantJob()" class="rounded-lg bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700">重新自動派送</button>
+              </div>
+              <div id="nearby-temp-workers" class="mt-5 grid gap-4 lg:grid-cols-2"></div>
+            </section>
+
+            <section class="grid gap-5 lg:grid-cols-2">
+              <div class="panel">
+                <div class="border-b border-slate-200 px-5 py-4"><h2 class="text-lg font-black">工人收到的即時任務</h2></div>
+                <div id="worker-inbox" class="space-y-3 p-5"></div>
+              </div>
+              <div class="panel">
+                <div class="border-b border-slate-200 px-5 py-4"><h2 class="text-lg font-black">雇主審核投遞</h2></div>
+                <div id="instant-review-list" class="space-y-3 p-5"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-worker" class="view">
+      <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-5 panel p-5">
+          <p class="text-xs font-black uppercase tracking-widest text-blue-600">Member Platform</p>
+          <h1 class="mt-2 text-3xl font-black text-slate-950">會員平台</h1>
+          <p class="mt-2 text-sm leading-7 text-slate-600">移工可管理身份驗證、履歷、投遞紀錄與通知。</p>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-3">
+          <article class="metric"><p class="text-sm font-bold text-slate-500">身份驗證</p><p class="mt-3 text-2xl font-black text-amber-600">待補件</p></article>
+          <article class="metric"><p class="text-sm font-bold text-slate-500">履歷完整度</p><p class="mt-3 text-2xl font-black text-blue-600">82%</p></article>
+          <article class="metric"><p class="text-sm font-bold text-slate-500">本月投遞</p><p class="mt-3 text-2xl font-black text-slate-900">6 次</p></article>
+        </div>
+
+        <div class="mt-5 grid gap-5 lg:grid-cols-[1fr_360px]">
+          <form class="panel" onsubmit="saveForm(event, '履歷資料已更新')">
+            <div class="border-b border-slate-200 px-5 py-4"><h2 class="text-lg font-black">履歷資料</h2></div>
+            <div class="grid gap-4 p-5 sm:grid-cols-2">
+              <label class="grid gap-1 text-sm font-bold text-slate-600">英文姓名<input value="Siti Aminah" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+              <label class="grid gap-1 text-sm font-bold text-slate-600">希望工作<select class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500"><option>家庭看護</option><option>製造業</option><option>餐飲服務</option></select></label>
+              <label class="grid gap-1 text-sm font-bold text-slate-600">期望地區<select class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500"><option>台北 / 新北</option><option>桃園</option><option>台中</option></select></label>
+              <label class="grid gap-1 text-sm font-bold text-slate-600">手機<input value="0912-345-678" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+              <label class="grid gap-1 text-sm font-bold text-slate-600 sm:col-span-2">工作經驗<textarea rows="4" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500">家庭照護 4 年，具備長者陪伴、備餐、清潔與基礎中文溝通能力。</textarea></label>
+            </div>
+            <div class="border-t border-slate-200 bg-slate-50 px-5 py-4 text-right"><button class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-black text-white hover:bg-blue-500">儲存履歷</button></div>
+          </form>
+
+          <aside class="panel p-5">
+            <h2 class="text-lg font-black">投遞紀錄</h2>
+            <div class="mt-4 space-y-3">
+              <div class="rounded-lg border border-slate-200 p-4"><p class="font-black">台北長照家庭</p><p class="mt-1 text-sm text-slate-500">已送出，等待雇主回覆</p></div>
+              <div class="rounded-lg border border-slate-200 p-4"><p class="font-black">桃園電子廠</p><p class="mt-1 text-sm text-slate-500">雇主已查看履歷</p></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-employer" class="view">
+      <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-5 flex flex-col gap-4 panel p-5 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p class="text-xs font-black uppercase tracking-widest text-blue-600">Employer Console</p>
+            <h1 class="mt-2 text-3xl font-black text-slate-950">雇主後台</h1>
+            <p class="mt-2 text-sm leading-7 text-slate-600">管理公司資料、職缺刊登、人才搜尋、履歷解鎖與點數交易。</p>
+          </div>
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <button onclick="openPricingModal()" class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-black text-white hover:bg-blue-500"><i class="fa-solid fa-coins mr-2"></i>購買點數</button>
+            <button onclick="openPostJobModal()" class="rounded-lg bg-slate-900 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"><i class="fa-solid fa-plus mr-2"></i>刊登職缺</button>
+          </div>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <article class="metric"><p class="text-sm font-bold text-slate-500">可用點數</p><p class="mt-3 text-3xl font-black text-blue-600"><span id="metric-points">120</span>P</p></article>
+          <article class="metric"><p class="text-sm font-bold text-slate-500">已解鎖履歷</p><p class="mt-3 text-3xl font-black text-slate-900"><span id="metric-unlocks">0</span></p></article>
+          <article class="metric"><p class="text-sm font-bold text-slate-500">刊登職缺</p><p class="mt-3 text-3xl font-black text-slate-900">5</p></article>
+          <article class="metric"><p class="text-sm font-bold text-slate-500">待處理應徵</p><p class="mt-3 text-3xl font-black text-rose-600">12</p></article>
+        </div>
+
+        <div class="mt-5 grid gap-5 xl:grid-cols-[310px_1fr]">
+          <aside class="space-y-5">
+            <section class="panel p-5">
+              <h2 class="text-lg font-black">雇主資料</h2>
+              <div class="mt-4 space-y-3 text-sm">
+                <div class="rounded-lg bg-slate-50 p-3"><p class="text-xs font-bold text-slate-500">公司名稱</p><p class="mt-1 font-black">宏達人力顧問有限公司</p></div>
+                <div class="rounded-lg bg-slate-50 p-3"><p class="text-xs font-bold text-slate-500">驗證狀態</p><p class="mt-1 font-black text-emerald-600">已通過</p></div>
+                <div class="rounded-lg bg-slate-50 p-3"><p class="text-xs font-bold text-slate-500">聯絡窗口</p><p class="mt-1 font-black">王先生 02-2345-6789</p></div>
+              </div>
+              <button onclick="openToast('雇主資料已儲存')" class="mt-4 w-full rounded-lg border border-slate-300 px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-50">更新資料</button>
+            </section>
+
+            <section class="panel p-5">
+              <h2 class="text-lg font-black">點數交易</h2>
+              <div id="point-history" class="mt-4 space-y-3 text-sm">
+                <div class="rounded-lg border border-slate-200 p-3"><p class="font-black">系統初始點數</p><p class="mt-1 text-slate-500">+120P</p></div>
+              </div>
+            </section>
+          </aside>
+
+          <div class="space-y-5">
+            <section class="panel">
+              <div class="flex flex-col gap-3 border-b border-slate-200 px-5 py-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                  <h2 class="text-lg font-black">人才搜尋與履歷解鎖</h2>
+                  <p class="mt-1 text-sm text-slate-500">完整履歷與聯絡方式需扣除 50P 後查看。</p>
+                </div>
+                <div class="grid gap-2 sm:grid-cols-3 lg:w-[520px]">
+                  <select class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500"><option>全部工種</option><option>家庭看護</option><option>製造業</option><option>餐飲服務</option></select>
+                  <select class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500"><option>全部地區</option><option>台北</option><option>桃園</option><option>台中</option></select>
+                  <button onclick="openToast('已更新搜尋條件')" class="rounded-lg bg-slate-900 px-4 py-3 text-sm font-black text-white hover:bg-slate-700">搜尋</button>
+                </div>
+              </div>
+              <div id="candidate-list" class="grid gap-4 p-5 lg:grid-cols-2"></div>
+            </section>
+
+            <section class="panel">
+              <div class="border-b border-slate-200 px-5 py-4"><h2 class="text-lg font-black">職缺管理</h2></div>
+              <div class="overflow-x-auto">
+                <table class="w-full min-w-[720px] text-left text-sm">
+                  <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                    <tr><th class="px-5 py-3">職缺</th><th class="px-5 py-3">類型</th><th class="px-5 py-3">薪資</th><th class="px-5 py-3">狀態</th><th class="px-5 py-3 text-right">操作</th></tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    <tr><td class="px-5 py-4 font-bold">台北長照家庭照護人員</td><td class="px-5 py-4">家庭看護</td><td class="px-5 py-4">NT$32,000-36,000</td><td class="px-5 py-4"><span class="rounded bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">已上架</span></td><td class="px-5 py-4 text-right"><button onclick="openToast('已開啟職缺編輯')" class="rounded-lg border border-slate-300 px-3 py-2 text-xs font-black text-slate-700">編輯</button></td></tr>
+                    <tr><td class="px-5 py-4 font-bold">桃園電子廠輪班作業員</td><td class="px-5 py-4">製造業</td><td class="px-5 py-4">NT$30,000 起</td><td class="px-5 py-4"><span class="rounded bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">審核中</span></td><td class="px-5 py-4 text-right"><button onclick="openToast('已開啟職缺編輯')" class="rounded-lg border border-slate-300 px-3 py-2 text-xs font-black text-slate-700">編輯</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-admin" class="view">
+      <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mb-5 panel bg-slate-950 p-5 text-white">
+          <p class="text-xs font-black uppercase tracking-widest text-blue-300">Admin Console</p>
+          <h1 class="mt-2 text-3xl font-black">管理員後台</h1>
+          <p class="mt-2 text-sm leading-7 text-slate-300">管理全站會員、雇主、職缺、點數交易與異常紀錄。</p>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <article class="metric"><p class="text-sm font-bold text-slate-500">待審會員</p><p class="mt-3 text-3xl font-black">18</p></article>
+          <article class="metric"><p class="text-sm font-bold text-slate-500">待審職缺</p><p class="mt-3 text-3xl font-black">7</p></article>
+          <article class="metric"><p class="text-sm font-bold text-slate-500">今日交易</p><p class="mt-3 text-3xl font-black">NT$86K</p></article>
+          <article class="metric"><p class="text-sm font-bold text-slate-500">異常提醒</p><p class="mt-3 text-3xl font-black text-rose-600">3</p></article>
+        </div>
+
+        <div class="mt-5 grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+          <section class="panel overflow-hidden">
+            <div class="border-b border-slate-200 px-5 py-4"><h2 class="text-lg font-black">審核清單</h2></div>
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[760px] text-left text-sm">
+                <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr><th class="px-5 py-3">項目</th><th class="px-5 py-3">類型</th><th class="px-5 py-3">狀態</th><th class="px-5 py-3">送件時間</th><th class="px-5 py-3 text-right">操作</th></tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr><td class="px-5 py-4 font-bold">Siti Aminah</td><td class="px-5 py-4">移工會員</td><td class="px-5 py-4"><span class="rounded bg-amber-50 px-2 py-1 text-xs font-bold text-amber-700">待補件</span></td><td class="px-5 py-4">2026/07/02</td><td class="px-5 py-4 text-right"><button onclick="openReviewModal('Siti Aminah', '移工會員', '待補件')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white">審核</button></td></tr>
+                  <tr><td class="px-5 py-4 font-bold">宏達人力顧問</td><td class="px-5 py-4">雇主帳號</td><td class="px-5 py-4"><span class="rounded bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">待審核</span></td><td class="px-5 py-4">2026/07/02</td><td class="px-5 py-4 text-right"><button onclick="openReviewModal('宏達人力顧問', '雇主帳號', '待審核')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white">審核</button></td></tr>
+                  <tr><td class="px-5 py-4 font-bold">桃園電子廠輪班作業員</td><td class="px-5 py-4">職缺</td><td class="px-5 py-4"><span class="rounded bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">待審核</span></td><td class="px-5 py-4">2026/07/01</td><td class="px-5 py-4 text-right"><button onclick="openReviewModal('桃園電子廠輪班作業員', '職缺', '待審核')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white">審核</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel p-5">
+            <h2 class="text-lg font-black">管理員工具</h2>
+            <div class="mt-4 space-y-3">
+              <button onclick="openToast('已匯出交易報表')" class="flex w-full items-center gap-3 rounded-lg border border-slate-200 p-4 text-left hover:bg-slate-50"><span class="grid h-10 w-10 place-items-center rounded-lg bg-emerald-50 text-emerald-600"><i class="fa-solid fa-file-export"></i></span><span><span class="block font-black">匯出交易報表</span><span class="text-sm text-slate-500">點數購買、扣點、退款紀錄</span></span></button>
+              <button onclick="openToast('已開啟異常帳號列表')" class="flex w-full items-center gap-3 rounded-lg border border-slate-200 p-4 text-left hover:bg-slate-50"><span class="grid h-10 w-10 place-items-center rounded-lg bg-rose-50 text-rose-600"><i class="fa-solid fa-triangle-exclamation"></i></span><span><span class="block font-black">異常帳號</span><span class="text-sm text-slate-500">大量解鎖、疑似濫用、檢舉紀錄</span></span></button>
+              <button onclick="openToast('已開啟客服任務')" class="flex w-full items-center gap-3 rounded-lg border border-slate-200 p-4 text-left hover:bg-slate-50"><span class="grid h-10 w-10 place-items-center rounded-lg bg-blue-50 text-blue-600"><i class="fa-solid fa-headset"></i></span><span><span class="block font-black">客服任務</span><span class="text-sm text-slate-500">會員驗證與付款問題</span></span></button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="pricing-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4">
+    <div class="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+        <div>
+          <p class="text-xs font-black uppercase tracking-widest text-blue-600">Point Plans</p>
+          <h2 class="mt-1 text-2xl font-black text-slate-950">雇主購買點數</h2>
+          <p class="mt-1 text-sm text-slate-500">雇主需使用點數解鎖完整履歷與聯絡方式。每份完整履歷扣 50P。</p>
+        </div>
+        <button onclick="closePricingModal()" class="grid h-9 w-9 place-items-center rounded-lg text-slate-500 hover:bg-slate-100" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="grid gap-4 p-5 md:grid-cols-3">
+        <article class="rounded-xl border border-slate-200 p-5">
+          <p class="text-sm font-black text-slate-500">入門方案</p>
+          <div class="mt-3 flex items-end gap-1"><span class="text-4xl font-black text-slate-950">100</span><span class="pb-1 text-sm font-bold text-slate-500">P</span></div>
+          <p class="mt-2 text-lg font-black text-emerald-600">NT$ 1,000</p>
+          <button onclick="purchasePlan('入門方案', 100)" class="mt-5 w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-black text-white hover:bg-slate-700">購買</button>
+        </article>
+        <article class="relative rounded-xl border-2 border-blue-600 p-5 shadow-lg shadow-blue-100">
+          <span class="absolute right-4 top-4 rounded bg-blue-600 px-2 py-1 text-xs font-black text-white">推薦</span>
+          <p class="text-sm font-black text-blue-600">成長方案</p>
+          <div class="mt-3 flex items-end gap-1"><span class="text-4xl font-black text-blue-600">600</span><span class="pb-1 text-sm font-bold text-blue-500">P</span></div>
+          <p class="mt-2 text-lg font-black text-emerald-600">NT$ 5,000</p>
+          <button onclick="purchasePlan('成長方案', 600)" class="mt-5 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-black text-white hover:bg-blue-500">購買</button>
+        </article>
+        <article class="rounded-xl border border-slate-200 p-5">
+          <p class="text-sm font-black text-slate-500">企業方案</p>
+          <div class="mt-3 flex items-end gap-1"><span class="text-4xl font-black text-slate-950">1,300</span><span class="pb-1 text-sm font-bold text-slate-500">P</span></div>
+          <p class="mt-2 text-lg font-black text-emerald-600">NT$ 10,000</p>
+          <button onclick="purchasePlan('企業方案', 1300)" class="mt-5 w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-black text-white hover:bg-slate-700">購買</button>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <div id="resume-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4">
+    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+        <div>
+          <p class="text-xs font-black uppercase tracking-widest text-blue-600">Full Resume</p>
+          <h2 id="resume-title" class="mt-1 text-2xl font-black text-slate-950">完整履歷</h2>
+          <p class="mt-1 text-sm text-slate-500">此資料已扣點解鎖，可在交易紀錄中查詢。</p>
+        </div>
+        <button onclick="closeResumeModal()" class="grid h-9 w-9 place-items-center rounded-lg text-slate-500 hover:bg-slate-100" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="resume-body" class="grid gap-4 p-5 md:grid-cols-2"></div>
+    </div>
+  </div>
+
+  <div id="job-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4">
+    <div class="w-full max-w-2xl rounded-xl bg-white shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+        <div><p class="text-xs font-black uppercase tracking-widest text-blue-600">Post Job</p><h2 class="mt-1 text-2xl font-black text-slate-950">刊登職缺</h2></div>
+        <button onclick="closePostJobModal()" class="grid h-9 w-9 place-items-center rounded-lg text-slate-500 hover:bg-slate-100" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form class="grid gap-4 p-5 sm:grid-cols-2" onsubmit="submitJob(event)">
+        <label class="grid gap-1 text-sm font-bold text-slate-600">職缺名稱<input required placeholder="例：家庭看護人員" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+        <label class="grid gap-1 text-sm font-bold text-slate-600">薪資區間<input required placeholder="例：NT$32,000-36,000" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" /></label>
+        <label class="grid gap-1 text-sm font-bold text-slate-600">工作地區<select class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500"><option>台北</option><option>桃園</option><option>台中</option><option>高雄</option></select></label>
+        <label class="grid gap-1 text-sm font-bold text-slate-600">工作類型<select class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500"><option>家庭看護</option><option>製造業</option><option>餐飲服務</option></select></label>
+        <label class="grid gap-1 text-sm font-bold text-slate-600 sm:col-span-2">工作內容<textarea rows="4" required class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500"></textarea></label>
+        <div class="sm:col-span-2 flex justify-end gap-2 border-t border-slate-200 pt-4">
+          <button type="button" onclick="closePostJobModal()" class="rounded-lg border border-slate-300 px-5 py-3 text-sm font-black text-slate-700">取消</button>
+          <button class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-black text-white hover:bg-blue-500">送出審核</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="review-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4">
+    <div class="w-full max-w-2xl rounded-xl bg-white shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+        <div><p class="text-xs font-black uppercase tracking-widest text-blue-600">Review</p><h2 class="mt-1 text-2xl font-black text-slate-950">管理員審核</h2></div>
+        <button onclick="closeReviewModal()" class="grid h-9 w-9 place-items-center rounded-lg text-slate-500 hover:bg-slate-100" aria-label="關閉"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-4 p-5">
+        <div class="grid gap-3 rounded-lg bg-slate-50 p-4 sm:grid-cols-3">
+          <div><p class="text-xs font-bold text-slate-500">項目</p><p id="review-name" class="mt-1 font-black text-slate-950"></p></div>
+          <div><p class="text-xs font-bold text-slate-500">類型</p><p id="review-type" class="mt-1 font-black text-slate-950"></p></div>
+          <div><p class="text-xs font-bold text-slate-500">狀態</p><p id="review-status" class="mt-1 font-black text-slate-950"></p></div>
+        </div>
+        <label class="grid gap-1 text-sm font-bold text-slate-600">審核備註<textarea id="review-note" rows="4" class="rounded-lg border border-slate-200 px-3 py-3 font-normal outline-none focus:border-blue-500" placeholder="輸入補件原因、通過說明或客服備註"></textarea></label>
+      </div>
+      <div class="flex flex-col-reverse gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:justify-end">
+        <button onclick="finishReview('退回補件')" class="rounded-lg border border-amber-300 px-5 py-3 text-sm font-black text-amber-700 hover:bg-amber-50">退回補件</button>
+        <button onclick="finishReview('審核通過')" class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-black text-white hover:bg-blue-500">審核通過</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed bottom-5 left-1/2 z-50 hidden -translate-x-1/2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-bold text-white shadow-2xl"></div>
+
+  <script>
+    const views = ["home", "jobs", "instant", "worker", "employer", "admin"];
+    let currentLanguage = localStorage.getItem("globalTalentLanguage") || "zh-Hant";
+    const translations = {
+      "zh-Hant": {
+        navHome: "前台首頁", navJobs: "找工作", navWorker: "會員平台", navEmployer: "雇主後台", navAdmin: "管理員後台",
+        employerPoints: "雇主點數", buyPoints: "購買點數", buyMorePoints: "購買更多點數",
+        homeBadge: "前台、會員、雇主後台、管理員後台整合",
+        homeTitle: "外籍人才媒合與後台管理一份 HTML 完成",
+        homeDesc: "雇主可購買點數、刊登職缺、搜尋人才並解鎖完整履歷；管理員可審核會員、職缺與交易紀錄。",
+        findJobs: "我要找工作", enterEmployer: "進入雇主後台", enterAdmin: "管理員後台",
+        walletTitle: "雇主點數中心", resumeAvailable: "可解鎖履歷", currentPoints: "目前點數", unlockCost: "單次解鎖", unlocked: "已解鎖", pendingJobs: "待審職缺",
+        talentSearch: "人才搜尋", talentSearchText: "履歷列表預設遮罩敏感資料，雇主扣點後才能查看完整履歷與聯絡方式。",
+        jobPost: "職缺刊登", jobPostText: "雇主可建立職缺，管理員審核後上架，維持資訊品質。",
+        adminAudit: "管理員稽核", adminAuditText: "會員、職缺、交易、檢舉與客服任務集中在管理員後台。",
+        jobsTitle: "找工作", jobsDesc: "搜尋合法職缺，依工作類型、地區、薪資與住宿條件快速篩選。", createResume: "建立履歷",
+        searchPlaceholder: "搜尋職缺、公司或技能", allTypes: "全部工種", allLocations: "全部地區", housingAny: "住宿不限", housingProvided: "提供住宿", housingNot: "不提供住宿", search: "搜尋",
+        resultPrefix: "符合條件：", resultSuffix: "筆職缺", verified: "合法審核", transparentSalary: "薪資透明", oneClickApply: "可一鍵投遞",
+        salary: "薪資待遇", apply: "我要應徵", noJobs: "目前沒有符合條件的職缺，請調整搜尋條件。",
+        memberTitle: "會員平台", memberDesc: "移工可管理身份驗證、履歷、投遞紀錄與通知。",
+        employerTitle: "雇主後台", employerDesc: "管理公司資料、職缺刊登、人才搜尋、履歷解鎖與點數交易。",
+        adminTitle: "管理員後台", adminDesc: "管理全站會員、雇主、職缺、點數交易與異常紀錄。",
+        unlockFull: "扣 50P 解鎖完整履歷", viewFull: "查看完整履歷", lockedSummary: "履歷摘要已遮罩。雇主需扣除 50P 解鎖後，才能查看完整履歷、聯絡方式與證件資訊。",
+        location: "地區", language: "語言", contact: "聯絡方式", fullResume: "完整履歷", notEnoughPoints: "點數不足，請先購買點數才能查看完整履歷",
+        basicPlan: "入門方案", growthPlan: "成長方案", enterprisePlan: "企業方案", buy: "購買",
+        typeCare: "家庭看護", typeFactory: "製造業", typeFood: "餐飲服務", typeConstruction: "營造業"
+      },
+      en: {
+        navHome: "Home", navJobs: "Find Jobs", navWorker: "Member Portal", navEmployer: "Employer Console", navAdmin: "Admin Console",
+        employerPoints: "Employer Points", buyPoints: "Buy Points", buyMorePoints: "Buy More Points",
+        homeBadge: "Frontend, member portal, employer console, and admin console in one page",
+        homeTitle: "Foreign talent matching and back office in one HTML",
+        homeDesc: "Employers can buy points, post jobs, search talent, and unlock full resumes. Admins can review members, jobs, and transactions.",
+        findJobs: "Find Jobs", enterEmployer: "Employer Console", enterAdmin: "Admin Console",
+        walletTitle: "Employer Point Wallet", resumeAvailable: "Resume unlock enabled", currentPoints: "Current Points", unlockCost: "Unlock Cost", unlocked: "Unlocked", pendingJobs: "Jobs Pending Review",
+        talentSearch: "Talent Search", talentSearchText: "Sensitive resume data is masked by default. Employers spend points to view full resumes and contact details.",
+        jobPost: "Job Posting", jobPostText: "Employers can create job posts, and admins review them before publication.",
+        adminAudit: "Admin Review", adminAuditText: "Members, jobs, transactions, reports, and support tasks are managed in the admin console.",
+        jobsTitle: "Find Jobs", jobsDesc: "Search verified jobs and filter by job type, location, salary, and housing.", createResume: "Create Resume",
+        searchPlaceholder: "Search jobs, companies, or skills", allTypes: "All Job Types", allLocations: "All Locations", housingAny: "Any Housing", housingProvided: "Housing Provided", housingNot: "No Housing", search: "Search",
+        resultPrefix: "Results:", resultSuffix: "jobs", verified: "Verified", transparentSalary: "Transparent Salary", oneClickApply: "One-click Apply",
+        salary: "Salary", apply: "Apply", noJobs: "No jobs match your filters. Please adjust your search.",
+        memberTitle: "Member Portal", memberDesc: "Workers can manage verification, resumes, applications, and notifications.",
+        employerTitle: "Employer Console", employerDesc: "Manage company profile, job posts, talent search, resume unlocks, and point transactions.",
+        adminTitle: "Admin Console", adminDesc: "Manage members, employers, jobs, point transactions, and alerts.",
+        unlockFull: "Unlock full resume for 50P", viewFull: "View full resume", lockedSummary: "Resume summary is masked. Employers must spend 50P to view the full resume, contact details, and document information.",
+        location: "Location", language: "Language", contact: "Contact", fullResume: "Full Resume", notEnoughPoints: "Not enough points. Please buy points before viewing the full resume.",
+        basicPlan: "Basic Plan", growthPlan: "Growth Plan", enterprisePlan: "Enterprise Plan", buy: "Buy",
+        typeCare: "Caregiver", typeFactory: "Manufacturing", typeFood: "Food Service", typeConstruction: "Construction"
+      },
+      id: {
+        navHome: "Beranda", navJobs: "Cari Kerja", navWorker: "Portal Anggota", navEmployer: "Dasbor Pemberi Kerja", navAdmin: "Dasbor Admin",
+        employerPoints: "Poin Pemberi Kerja", buyPoints: "Beli Poin", buyMorePoints: "Beli Poin Lagi",
+        homeBadge: "Frontend, anggota, pemberi kerja, dan admin dalam satu halaman",
+        homeTitle: "Pencocokan tenaga kerja asing dan admin dalam satu HTML",
+        homeDesc: "Pemberi kerja dapat membeli poin, memasang lowongan, mencari kandidat, dan membuka resume lengkap. Admin dapat meninjau anggota, lowongan, dan transaksi.",
+        findJobs: "Cari Kerja", enterEmployer: "Dasbor Pemberi Kerja", enterAdmin: "Dasbor Admin",
+        walletTitle: "Dompet Poin Pemberi Kerja", resumeAvailable: "Resume dapat dibuka", currentPoints: "Poin Saat Ini", unlockCost: "Biaya Buka", unlocked: "Dibuka", pendingJobs: "Lowongan Menunggu",
+        talentSearch: "Cari Kandidat", talentSearchText: "Data sensitif resume disamarkan. Pemberi kerja memakai poin untuk melihat resume dan kontak lengkap.",
+        jobPost: "Pasang Lowongan", jobPostText: "Pemberi kerja membuat lowongan dan admin meninjau sebelum tayang.",
+        adminAudit: "Tinjauan Admin", adminAuditText: "Anggota, lowongan, transaksi, laporan, dan dukungan dikelola di dasbor admin.",
+        jobsTitle: "Cari Kerja", jobsDesc: "Cari lowongan terverifikasi dan filter berdasarkan jenis kerja, lokasi, gaji, dan akomodasi.", createResume: "Buat Resume",
+        searchPlaceholder: "Cari lowongan, perusahaan, atau keterampilan", allTypes: "Semua Jenis", allLocations: "Semua Lokasi", housingAny: "Akomodasi Bebas", housingProvided: "Akomodasi Disediakan", housingNot: "Tanpa Akomodasi", search: "Cari",
+        resultPrefix: "Hasil:", resultSuffix: "lowongan", verified: "Terverifikasi", transparentSalary: "Gaji Transparan", oneClickApply: "Lamar Sekali Klik",
+        salary: "Gaji", apply: "Lamar", noJobs: "Tidak ada lowongan yang cocok. Ubah filter pencarian.",
+        memberTitle: "Portal Anggota", memberDesc: "Pekerja dapat mengelola verifikasi, resume, lamaran, dan notifikasi.",
+        employerTitle: "Dasbor Pemberi Kerja", employerDesc: "Kelola profil perusahaan, lowongan, pencarian kandidat, pembukaan resume, dan transaksi poin.",
+        adminTitle: "Dasbor Admin", adminDesc: "Kelola anggota, pemberi kerja, lowongan, transaksi poin, dan peringatan.",
+        unlockFull: "Buka resume lengkap 50P", viewFull: "Lihat resume lengkap", lockedSummary: "Ringkasan resume disamarkan. Pemberi kerja perlu memakai 50P untuk melihat resume, kontak, dan dokumen lengkap.",
+        location: "Lokasi", language: "Bahasa", contact: "Kontak", fullResume: "Resume Lengkap", notEnoughPoints: "Poin tidak cukup. Silakan beli poin dahulu.",
+        basicPlan: "Paket Dasar", growthPlan: "Paket Pertumbuhan", enterprisePlan: "Paket Perusahaan", buy: "Beli",
+        typeCare: "Perawat Rumah", typeFactory: "Manufaktur", typeFood: "Layanan Makanan", typeConstruction: "Konstruksi"
+      },
+      fil: {
+        navHome: "Home", navJobs: "Maghanap ng Trabaho", navWorker: "Member Portal", navEmployer: "Employer Dashboard", navAdmin: "Admin Dashboard",
+        employerPoints: "Employer Points", buyPoints: "Bumili ng Points", buyMorePoints: "Bumili Pa ng Points",
+        homeBadge: "Frontend, member portal, employer, at admin sa isang pahina",
+        homeTitle: "Foreign talent matching at back office sa isang HTML",
+        homeDesc: "Makakabili ng points ang employer, makakapag-post ng trabaho, makakahanap ng talent, at makakapag-unlock ng full resume.",
+        findJobs: "Maghanap ng Trabaho", enterEmployer: "Employer Dashboard", enterAdmin: "Admin Dashboard",
+        walletTitle: "Employer Point Wallet", resumeAvailable: "Maaaring i-unlock ang resume", currentPoints: "Kasalukuyang Points", unlockCost: "Unlock Cost", unlocked: "Na-unlock", pendingJobs: "Trabahong Pending",
+        talentSearch: "Talent Search", talentSearchText: "Nakatago ang sensitibong resume data. Kailangang gumamit ng points para makita ang buong resume at contact.",
+        jobPost: "Job Posting", jobPostText: "Makakagawa ng job post ang employer at rerepasuhin ito ng admin bago ma-publish.",
+        adminAudit: "Admin Review", adminAuditText: "Members, jobs, transactions, reports, at support tasks ay nasa admin dashboard.",
+        jobsTitle: "Maghanap ng Trabaho", jobsDesc: "Maghanap ng verified jobs at i-filter ayon sa uri, lokasyon, sahod, at tirahan.", createResume: "Gumawa ng Resume",
+        searchPlaceholder: "Maghanap ng trabaho, kumpanya, o skill", allTypes: "Lahat ng Uri", allLocations: "Lahat ng Lokasyon", housingAny: "Kahit Anong Tirahan", housingProvided: "May Tirahan", housingNot: "Walang Tirahan", search: "Search",
+        resultPrefix: "Resulta:", resultSuffix: "trabaho", verified: "Verified", transparentSalary: "Malinaw ang Sahod", oneClickApply: "One-click Apply",
+        salary: "Sahod", apply: "Mag-apply", noJobs: "Walang tugmang trabaho. Baguhin ang filter.",
+        memberTitle: "Member Portal", memberDesc: "Maaaring pamahalaan ng worker ang verification, resume, applications, at notifications.",
+        employerTitle: "Employer Dashboard", employerDesc: "Pamahalaan ang company profile, jobs, talent search, resume unlocks, at point transactions.",
+        adminTitle: "Admin Dashboard", adminDesc: "Pamahalaan ang members, employers, jobs, point transactions, at alerts.",
+        unlockFull: "I-unlock ang full resume 50P", viewFull: "Tingnan ang full resume", lockedSummary: "Nakatago ang resume summary. Kailangan ng 50P para makita ang full resume, contact, at documents.",
+        location: "Lokasyon", language: "Wika", contact: "Contact", fullResume: "Full Resume", notEnoughPoints: "Kulang ang points. Bumili muna ng points.",
+        basicPlan: "Basic Plan", growthPlan: "Growth Plan", enterprisePlan: "Enterprise Plan", buy: "Bumili",
+        typeCare: "Caregiver", typeFactory: "Manufacturing", typeFood: "Food Service", typeConstruction: "Construction"
+      },
+      th: {
+        navHome: "หน้าแรก", navJobs: "หางาน", navWorker: "สมาชิก", navEmployer: "แดชบอร์ดนายจ้าง", navAdmin: "แดชบอร์ดผู้ดูแล",
+        employerPoints: "คะแนนนายจ้าง", buyPoints: "ซื้อคะแนน", buyMorePoints: "ซื้อคะแนนเพิ่ม",
+        homeBadge: "หน้าแรก สมาชิก นายจ้าง และผู้ดูแลในหน้าเดียว",
+        homeTitle: "จับคู่แรงงานต่างชาติและระบบหลังบ้านใน HTML เดียว",
+        homeDesc: "นายจ้างซื้อคะแนน ลงประกาศงาน ค้นหาผู้สมัคร และปลดล็อกเรซูเม่ฉบับเต็มได้ ผู้ดูแลตรวจสอบสมาชิก งาน และธุรกรรมได้",
+        findJobs: "หางาน", enterEmployer: "แดชบอร์ดนายจ้าง", enterAdmin: "แดชบอร์ดผู้ดูแล",
+        walletTitle: "กระเป๋าคะแนนนายจ้าง", resumeAvailable: "ปลดล็อกเรซูเม่ได้", currentPoints: "คะแนนปัจจุบัน", unlockCost: "ค่าปลดล็อก", unlocked: "ปลดล็อกแล้ว", pendingJobs: "งานรอตรวจ",
+        talentSearch: "ค้นหาผู้สมัคร", talentSearchText: "ข้อมูลสำคัญถูกซ่อนไว้ นายจ้างต้องใช้คะแนนเพื่อดูเรซูเม่และข้อมูลติดต่อเต็ม",
+        jobPost: "ลงประกาศงาน", jobPostText: "นายจ้างสร้างประกาศงาน และผู้ดูแลตรวจสอบก่อนเผยแพร่",
+        adminAudit: "ตรวจสอบโดยผู้ดูแล", adminAuditText: "สมาชิก งาน ธุรกรรม รายงาน และงานบริการถูกรวมไว้ในแดชบอร์ดผู้ดูแล",
+        jobsTitle: "หางาน", jobsDesc: "ค้นหางานที่ตรวจสอบแล้ว และกรองตามประเภทงาน พื้นที่ เงินเดือน และที่พัก", createResume: "สร้างเรซูเม่",
+        searchPlaceholder: "ค้นหางาน บริษัท หรือทักษะ", allTypes: "ทุกประเภทงาน", allLocations: "ทุกพื้นที่", housingAny: "ไม่จำกัดที่พัก", housingProvided: "มีที่พัก", housingNot: "ไม่มีที่พัก", search: "ค้นหา",
+        resultPrefix: "ผลลัพธ์:", resultSuffix: "งาน", verified: "ตรวจสอบแล้ว", transparentSalary: "เงินเดือนชัดเจน", oneClickApply: "สมัครได้ทันที",
+        salary: "เงินเดือน", apply: "สมัคร", noJobs: "ไม่พบงานที่ตรงเงื่อนไข กรุณาปรับการค้นหา",
+        memberTitle: "พอร์ทัลสมาชิก", memberDesc: "แรงงานจัดการการยืนยันตัวตน เรซูเม่ การสมัคร และการแจ้งเตือนได้",
+        employerTitle: "แดชบอร์ดนายจ้าง", employerDesc: "จัดการข้อมูลบริษัท ประกาศงาน ค้นหาผู้สมัคร ปลดล็อกเรซูเม่ และธุรกรรมคะแนน",
+        adminTitle: "แดชบอร์ดผู้ดูแล", adminDesc: "จัดการสมาชิก นายจ้าง งาน ธุรกรรมคะแนน และการแจ้งเตือน",
+        unlockFull: "ปลดล็อกเรซูเม่เต็ม 50P", viewFull: "ดูเรซูเม่เต็ม", lockedSummary: "สรุปเรซูเม่ถูกซ่อนไว้ ต้องใช้ 50P เพื่อดูเรซูเม่เต็ม ข้อมูลติดต่อ และเอกสาร",
+        location: "พื้นที่", language: "ภาษา", contact: "ติดต่อ", fullResume: "เรซูเม่เต็ม", notEnoughPoints: "คะแนนไม่พอ กรุณาซื้อคะแนนก่อน",
+        basicPlan: "แพ็กเกจเริ่มต้น", growthPlan: "แพ็กเกจเติบโต", enterprisePlan: "แพ็กเกจองค์กร", buy: "ซื้อ",
+        typeCare: "ผู้ดูแล", typeFactory: "โรงงาน", typeFood: "บริการอาหาร", typeConstruction: "ก่อสร้าง"
+      },
+      hi: {
+        navHome: "होम", navJobs: "नौकरी खोजें", navWorker: "सदस्य पोर्टल", navEmployer: "नियोक्ता डैशबोर्ड", navAdmin: "एडमिन डैशबोर्ड",
+        employerPoints: "नियोक्ता पॉइंट", buyPoints: "पॉइंट खरीदें", buyMorePoints: "और पॉइंट खरीदें",
+        homeBadge: "फ्रंटएंड, सदस्य, नियोक्ता और एडमिन एक ही पेज में",
+        homeTitle: "विदेशी प्रतिभा मिलान और बैक ऑफिस एक HTML में",
+        homeDesc: "नियोक्ता पॉइंट खरीद सकते हैं, नौकरियां पोस्ट कर सकते हैं, प्रतिभा खोज सकते हैं और पूरा रिज्यूमे अनलॉक कर सकते हैं।",
+        findJobs: "नौकरी खोजें", enterEmployer: "नियोक्ता डैशबोर्ड", enterAdmin: "एडमिन डैशबोर्ड",
+        walletTitle: "नियोक्ता पॉइंट वॉलेट", resumeAvailable: "रिज्यूमे अनलॉक उपलब्ध", currentPoints: "मौजूदा पॉइंट", unlockCost: "अनलॉक लागत", unlocked: "अनलॉक", pendingJobs: "समीक्षा में नौकरियां",
+        talentSearch: "प्रतिभा खोज", talentSearchText: "संवेदनशील रिज्यूमे डेटा छिपा रहता है। पूरा रिज्यूमे और संपर्क देखने के लिए पॉइंट लगते हैं।",
+        jobPost: "नौकरी पोस्ट", jobPostText: "नियोक्ता नौकरी बना सकते हैं, एडमिन समीक्षा के बाद प्रकाशित करता है।",
+        adminAudit: "एडमिन समीक्षा", adminAuditText: "सदस्य, नौकरियां, लेनदेन, रिपोर्ट और सहायता कार्य एडमिन डैशबोर्ड में हैं।",
+        jobsTitle: "नौकरी खोजें", jobsDesc: "सत्यापित नौकरियां खोजें और प्रकार, स्थान, वेतन और आवास से फ़िल्टर करें।", createResume: "रिज्यूमे बनाएं",
+        searchPlaceholder: "नौकरी, कंपनी या कौशल खोजें", allTypes: "सभी प्रकार", allLocations: "सभी स्थान", housingAny: "कोई भी आवास", housingProvided: "आवास उपलब्ध", housingNot: "आवास नहीं", search: "खोजें",
+        resultPrefix: "परिणाम:", resultSuffix: "नौकरियां", verified: "सत्यापित", transparentSalary: "स्पष्ट वेतन", oneClickApply: "एक क्लिक आवेदन",
+        salary: "वेतन", apply: "आवेदन करें", noJobs: "कोई मिलती नौकरी नहीं। कृपया फ़िल्टर बदलें।",
+        memberTitle: "सदस्य पोर्टल", memberDesc: "वर्कर सत्यापन, रिज्यूमे, आवेदन और सूचनाएं प्रबंधित कर सकते हैं।",
+        employerTitle: "नियोक्ता डैशबोर्ड", employerDesc: "कंपनी प्रोफ़ाइल, नौकरी पोस्ट, प्रतिभा खोज, रिज्यूमे अनलॉक और पॉइंट लेनदेन प्रबंधित करें।",
+        adminTitle: "एडमिन डैशबोर्ड", adminDesc: "सदस्य, नियोक्ता, नौकरियां, पॉइंट लेनदेन और अलर्ट प्रबंधित करें।",
+        unlockFull: "पूरा रिज्यूमे 50P में अनलॉक करें", viewFull: "पूरा रिज्यूमे देखें", lockedSummary: "रिज्यूमे सारांश छिपा है। पूरा रिज्यूमे, संपर्क और दस्तावेज देखने के लिए 50P चाहिए।",
+        location: "स्थान", language: "भाषा", contact: "संपर्क", fullResume: "पूरा रिज्यूमे", notEnoughPoints: "पॉइंट पर्याप्त नहीं हैं। पहले पॉइंट खरीदें।",
+        basicPlan: "बेसिक प्लान", growthPlan: "ग्रोथ प्लान", enterprisePlan: "एंटरप्राइज प्लान", buy: "खरीदें",
+        typeCare: "केयरगिवर", typeFactory: "मैन्युफैक्चरिंग", typeFood: "फूड सर्विस", typeConstruction: "कंस्ट्रक्शन"
+      }
+    };
+    let employerPoints = 120;
+    let unlockCount = 0;
+    const unlocked = new Set();
+    const unlockCost = 50;
+
+    const candidates = [
+      {
+        id: "siti",
+        name: "Siti Aminah",
+        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=180&q=80",
+        country: "印尼",
+        job: "家庭看護",
+        location: "新北市",
+        experience: "4 年",
+        phone: "0912-345-678",
+        permit: "ARC A123456789",
+        languages: "中文基礎、英文",
+        summary: "具備長者照護、備餐、清潔與陪同就醫經驗，前雇主評價穩定。",
+      },
+      {
+        id: "mark",
+        name: "Mark Santos",
+        avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=180&q=80",
+        country: "菲律賓",
+        job: "製造業",
+        location: "桃園市",
+        experience: "3 年",
+        phone: "0988-765-432",
+        permit: "ARC B987654321",
+        languages: "英文、中文基礎",
+        summary: "熟悉機台操作、品檢與輪班制度，可配合加班與宿舍安排。",
+      },
+      {
+        id: "maria",
+        name: "Maria Teresa",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=180&q=80",
+        country: "越南",
+        job: "餐飲服務",
+        location: "台中市",
+        experience: "2 年",
+        phone: "0977-222-168",
+        permit: "ARC C246813579",
+        languages: "中文中等、越南語",
+        summary: "有連鎖餐飲內外場經驗，熟悉備料、清潔、收銀與基本點餐溝通。",
+      }
+    ];
+
+    const jobs = [
+      {
+        title: "台北長照家庭照護人員",
+        company: "安心長照家庭",
+        type: "家庭看護",
+        location: "台北",
+        salary: "NT$32,000-36,000",
+        housing: "提供住宿",
+        tags: ["長者照護", "備餐", "陪同就醫"],
+        description: "照顧長者日常生活、簡易備餐、環境整理與陪同回診，需基礎中文溝通。",
+      },
+      {
+        title: "桃園電子廠輪班作業員",
+        company: "宏達電子製造",
+        type: "製造業",
+        location: "桃園",
+        salary: "NT$30,000 起，加班另計",
+        housing: "提供住宿",
+        tags: ["機台操作", "品檢", "輪班"],
+        description: "負責產線機台操作、品質檢查與包裝，提供宿舍與交通接駁。",
+      },
+      {
+        title: "台中連鎖餐飲內外場人員",
+        company: "禾味餐飲集團",
+        type: "餐飲服務",
+        location: "台中",
+        salary: "NT$29,000-33,000",
+        housing: "不提供住宿",
+        tags: ["備料", "收銀", "清潔"],
+        description: "內外場支援、備料、點餐、清潔與收銀，需可配合排班。",
+      },
+      {
+        title: "高雄營造工地助手",
+        company: "永盛工程",
+        type: "營造業",
+        location: "高雄",
+        salary: "NT$34,000 起",
+        housing: "提供住宿",
+        tags: ["現場支援", "搬運", "安全訓練"],
+        description: "協助工地材料整理、現場支援與基礎施工任務，入職提供安全訓練。",
+      }
+    ];
+
+    const tierRank = { "gold": 3, "silver": 2, "bronze": 1 };
+    const tierText = { "gold": "金卡", "silver": "銀卡", "bronze": "銅卡" };
+    const tierClass = { "gold": "tier-gold", "silver": "tier-silver", "bronze": "tier-bronze" };
+    let instantJobs = [
+      { id: "ij-1", title: "信義區活動撤場人員", headcount: 3, hours: 4, pay: "1600", location: "台北市信義區", skill: "活動撤場", status: "推播中" }
+    ];
+    let instantApplications = [];
+    const tempWorkers = [
+      { id: "tw-1", name: "Arif Rahman", tier: "gold", distance: 0.8, rating: 4.9, skill: "活動撤場", status: "online", waitFree: true, avatar: "A" },
+      { id: "tw-2", name: "Maria Lopez", tier: "silver", distance: 1.4, rating: 4.8, skill: "餐飲支援", status: "online", waitFree: false, avatar: "M" },
+      { id: "tw-3", name: "Somchai K.", tier: "gold", distance: 2.1, rating: 4.7, skill: "倉儲搬運", status: "online", waitFree: true, avatar: "S" },
+      { id: "tw-4", name: "Ravi Kumar", tier: "bronze", distance: 1.1, rating: 4.6, skill: "清潔打掃", status: "online", waitFree: false, avatar: "R" },
+      { id: "tw-5", name: "Lina Putri", tier: "silver", distance: 2.8, rating: 4.9, skill: "展場人員", status: "online", waitFree: false, avatar: "L" }
+    ];
+
+    function sortedTempWorkers() {
+      return [...tempWorkers].sort((a, b) => {
+        if (tierRank[b.tier] !== tierRank[a.tier]) return tierRank[b.tier] - tierRank[a.tier];
+        if (a.distance !== b.distance) return a.distance - b.distance;
+        return b.rating - a.rating;
+      });
+    }
+
+    function installInstantNav() {
+      if (!document.querySelector(".nav-btn[data-view='instant']")) {
+        const desktopNav = document.querySelector("header nav");
+        const workerButton = document.querySelector("header nav .nav-btn[data-view='worker']");
+        if (desktopNav && workerButton) {
+          workerButton.insertAdjacentHTML("beforebegin", `<button class="nav-btn rounded-lg px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100" data-view="instant" onclick="showView('instant')">即時派工</button>`);
+        }
+        const mobileWorkerButton = document.querySelector("#mobile-menu .nav-btn[data-view='worker']");
+        if (mobileWorkerButton) {
+          mobileWorkerButton.insertAdjacentHTML("beforebegin", `<button class="nav-btn rounded-lg px-4 py-3 text-left text-sm font-bold text-slate-600" data-view="instant" onclick="showView('instant'); closeMobileMenu()">即時派工</button>`);
+        }
+      }
+    }
+
+    function renderInstantApp() {
+      const sorted = sortedTempWorkers();
+      const online = sorted.filter((worker) => worker.status === "online");
+      const onlineCount = document.getElementById("instant-online-count");
+      const jobCount = document.getElementById("instant-job-count");
+      if (onlineCount) onlineCount.textContent = online.length;
+      if (jobCount) jobCount.textContent = instantJobs.length;
+
+      const currentJob = instantJobs[0];
+      if (currentJob) {
+        const phoneTitle = document.getElementById("phone-job-title");
+        const phonePay = document.getElementById("phone-job-pay");
+        if (phoneTitle) phoneTitle.textContent = currentJob.title;
+        if (phonePay) phonePay.textContent = `NT$ ${currentJob.pay} / ${currentJob.hours} 小時`;
+      }
+
+      const nearby = document.getElementById("nearby-temp-workers");
+      if (nearby) {
+        nearby.innerHTML = sorted.map((worker, index) => `
+          <article class="rounded-xl border border-slate-200 bg-white p-4">
+            <div class="flex items-start gap-3">
+              <div class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-slate-950 text-lg font-black text-white">${worker.avatar}</div>
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="font-black text-slate-950">${worker.name}</h3>
+                  <span class="${tierClass[worker.tier]} rounded-lg px-2 py-1 text-xs font-black">${tierText[worker.tier]}</span>
+                  ${worker.waitFree ? '<span class="rounded-lg bg-emerald-50 px-2 py-1 text-xs font-black text-emerald-700">免排隊</span>' : ''}
+                </div>
+                <p class="mt-1 text-sm text-slate-500">${worker.skill} · ${worker.distance} km · ${worker.rating} ★</p>
+                <p class="mt-2 text-xs font-bold text-slate-500">派送順位 #${index + 1}：${tierText[worker.tier]} 優先，距離次之，評分加權。</p>
+              </div>
+              <button onclick="sendInstantJobToWorker('${worker.id}')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white hover:bg-blue-500">指定推播</button>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      const feed = document.getElementById("phone-worker-feed");
+      if (feed) {
+        feed.innerHTML = sorted.slice(0, 3).map((worker, index) => `
+          <div class="rounded-xl bg-white p-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-black">${worker.name}</span>
+              <span class="text-xs font-black text-slate-500">#${index + 1}</span>
+            </div>
+            <p class="mt-1 text-xs text-slate-500">${tierText[worker.tier]} · ${worker.distance} km · ${worker.skill}</p>
+          </div>
+        `).join("");
+      }
+
+      renderWorkerInbox();
+      renderInstantReviews();
+    }
+
+    function createInstantJob(event) {
+      event.preventDefault();
+      const job = {
+        id: `ij-${Date.now()}`,
+        title: document.getElementById("instant-title").value,
+        headcount: Number(document.getElementById("instant-headcount").value || 1),
+        hours: Number(document.getElementById("instant-hours").value || 1),
+        pay: document.getElementById("instant-pay").value,
+        location: document.getElementById("instant-location").value,
+        skill: document.getElementById("instant-skill").value,
+        status: "推播中"
+      };
+      instantJobs.unshift(job);
+      autoDispatchInstantJob();
+      openToast("已依金卡、銀卡、銅卡順序自動推播附近工人");
+      renderInstantApp();
+    }
+
+    function autoDispatchInstantJob() {
+      const job = instantJobs[0];
+      if (!job) return;
+      sortedTempWorkers().slice(0, 5).forEach((worker, index) => {
+        const exists = instantApplications.some((app) => app.jobId === job.id && app.workerId === worker.id);
+        if (!exists) {
+          instantApplications.push({
+            id: `ia-${job.id}-${worker.id}`,
+            jobId: job.id,
+            workerId: worker.id,
+            status: index < 2 ? "已優先推播" : "等待回覆",
+            autoSent: true
+          });
+        }
+      });
+      renderInstantApp();
+    }
+
+    function sendInstantJobToWorker(workerId) {
+      const job = instantJobs[0];
+      const worker = tempWorkers.find((item) => item.id === workerId);
+      if (!job || !worker) return;
+      const exists = instantApplications.some((app) => app.jobId === job.id && app.workerId === worker.id);
+      if (!exists) {
+        instantApplications.push({ id: `ia-${job.id}-${worker.id}`, jobId: job.id, workerId: worker.id, status: "雇主指定推播", autoSent: false });
+      }
+      openToast(`已推播給 ${worker.name}`);
+      renderInstantApp();
+    }
+
+    function quickApplyFromPhone() {
+      const goldWorker = sortedTempWorkers()[0];
+      if (goldWorker) quickApply(goldWorker.id);
+    }
+
+    function quickApply(workerId) {
+      const job = instantJobs[0];
+      const worker = tempWorkers.find((item) => item.id === workerId);
+      if (!job || !worker) return;
+      const app = instantApplications.find((item) => item.jobId === job.id && item.workerId === worker.id);
+      if (app) app.status = "已投簡歷，待雇主審核";
+      else instantApplications.push({ id: `ia-${job.id}-${worker.id}`, jobId: job.id, workerId: worker.id, status: "已投簡歷，待雇主審核", autoSent: false });
+      openToast(`${worker.name} 已立即投簡歷`);
+      renderInstantApp();
+    }
+
+    function reviewInstantApplication(appId, decision) {
+      const app = instantApplications.find((item) => item.id === appId);
+      if (!app) return;
+      app.status = decision === "approve" ? "錄取，等待到場" : "未錄取";
+      openToast(app.status);
+      renderInstantApp();
+    }
+
+    function renderWorkerInbox() {
+      const inbox = document.getElementById("worker-inbox");
+      if (!inbox) return;
+      const job = instantJobs[0];
+      if (!job) {
+        inbox.innerHTML = `<p class="text-sm font-bold text-slate-500">目前沒有即時任務。</p>`;
+        return;
+      }
+      inbox.innerHTML = sortedTempWorkers().slice(0, 5).map((worker) => {
+        const app = instantApplications.find((item) => item.jobId === job.id && item.workerId === worker.id);
+        return `
+          <div class="rounded-xl border border-slate-200 p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="${tierClass[worker.tier]} rounded-lg px-2 py-1 text-xs font-black">${tierText[worker.tier]}</span>
+                  <p class="font-black">${worker.name}</p>
+                </div>
+                <p class="mt-2 text-sm text-slate-600">${job.title} · NT$ ${job.pay} · ${job.location}</p>
+                <p class="mt-1 text-xs font-bold text-slate-500">${app ? app.status : "尚未推播"}</p>
+              </div>
+              <button onclick="quickApply('${worker.id}')" class="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-black text-white hover:bg-emerald-500">立即投簡歷</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderInstantReviews() {
+      const review = document.getElementById("instant-review-list");
+      if (!review) return;
+      const applied = instantApplications.filter((app) => app.status.includes("待雇主審核") || app.status.includes("錄取") || app.status.includes("未錄取"));
+      if (!applied.length) {
+        review.innerHTML = `<p class="rounded-xl bg-slate-50 p-4 text-sm font-bold text-slate-500">尚無工人投遞。系統已先依階級推播，等待回覆中。</p>`;
+        return;
+      }
+      review.innerHTML = applied.map((app) => {
+        const worker = tempWorkers.find((item) => item.id === app.workerId);
+        const job = instantJobs.find((item) => item.id === app.jobId);
+        if (!worker || !job) return "";
+        return `
+          <div class="rounded-xl border border-slate-200 p-4">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="${tierClass[worker.tier]} rounded-lg px-2 py-1 text-xs font-black">${tierText[worker.tier]}</span>
+                  <h3 class="font-black">${worker.name}</h3>
+                </div>
+                <p class="mt-2 text-sm text-slate-600">${worker.skill} · ${worker.distance} km · ${worker.rating} ★</p>
+                <p class="mt-1 text-xs font-bold text-blue-600">${app.status}</p>
+              </div>
+              <div class="flex shrink-0 flex-col gap-2">
+                <button onclick="reviewInstantApplication('${app.id}', 'approve')" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-black text-white hover:bg-blue-500">錄取</button>
+                <button onclick="reviewInstantApplication('${app.id}', 'reject')" class="rounded-lg border border-slate-300 px-3 py-2 text-xs font-black text-slate-700 hover:bg-slate-50">婉拒</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function tr(key) {
+      return (translations[currentLanguage] && translations[currentLanguage][key]) || translations["zh-Hant"][key] || key;
+    }
+
+    function typeLabel(value) {
+      const map = { "家庭看護": "typeCare", "製造業": "typeFactory", "餐飲服務": "typeFood", "營造業": "typeConstruction" };
+      return tr(map[value] || value);
+    }
+
+    function housingLabel(value) {
+      if (value === "提供住宿") return tr("housingProvided");
+      if (value === "不提供住宿") return tr("housingNot");
+      return value;
+    }
+
+    function setText(selector, text) {
+      const element = document.querySelector(selector);
+      if (element) element.textContent = text;
+    }
+
+    function setAllText(selector, text) {
+      document.querySelectorAll(selector).forEach((element) => { element.textContent = text; });
+    }
+
+    function setLanguage(lang) {
+      currentLanguage = translations[lang] ? lang : "zh-Hant";
+      localStorage.setItem("globalTalentLanguage", currentLanguage);
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLanguage;
+      document.title = `GlobalTalent | ${tr("homeTitle")}`;
+      const desktopSelect = document.getElementById("language-select");
+      const mobileSelect = document.getElementById("mobile-language-select");
+      if (desktopSelect) desktopSelect.value = currentLanguage;
+      if (mobileSelect) mobileSelect.value = currentLanguage;
+
+      setAllText(".nav-btn[data-view='home']", tr("navHome"));
+      setAllText(".nav-btn[data-view='jobs']", tr("navJobs"));
+      setAllText(".nav-btn[data-view='instant']", "即時派工");
+      setAllText(".nav-btn[data-view='worker']", tr("navWorker"));
+      setAllText(".nav-btn[data-view='employer']", tr("navEmployer"));
+      setAllText(".nav-btn[data-view='admin']", tr("navAdmin"));
+      document.querySelectorAll("button[onclick*='openPricingModal']").forEach((button) => {
+        if (!button.closest("#pricing-modal")) button.innerHTML = button.className.includes("inline") ? `<i class="fa-solid fa-coins mr-2"></i>${tr("buyPoints")}` : tr("buyPoints");
+      });
+
+      const badge = document.querySelector("#view-home .inline-flex.w-fit");
+      if (badge) badge.innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${tr("homeBadge")}`;
+      setText("#view-home h1", tr("homeTitle"));
+      setText("#view-home h1 + p", tr("homeDesc"));
+      const homeJobs = document.querySelector("#view-home button[onclick=\"showView('jobs')\"]");
+      if (homeJobs) homeJobs.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> ${tr("findJobs")}`;
+      const homeEmployer = document.querySelector("#view-home button[onclick=\"showView('employer')\"]");
+      if (homeEmployer) homeEmployer.innerHTML = `<i class="fa-solid fa-building"></i> ${tr("enterEmployer")}`;
+      const homeAdmin = document.querySelector("#view-home button[onclick=\"showView('admin')\"]");
+      if (homeAdmin) homeAdmin.innerHTML = `<i class="fa-solid fa-user-shield"></i> ${tr("enterAdmin")}`;
+
+      const wallet = document.querySelector("#view-home .rounded-xl.border.border-white\\/15");
+      if (wallet) {
+        const labels = wallet.querySelectorAll("p.text-xs.font-bold");
+        setText("#view-home .rounded-xl.border.border-white\\/15 h2", tr("walletTitle"));
+        const status = wallet.querySelector("span.rounded-lg");
+        if (status) status.textContent = tr("resumeAvailable");
+        if (labels[0]) labels[0].textContent = tr("currentPoints");
+        if (labels[1]) labels[1].textContent = tr("unlockCost");
+        if (labels[2]) labels[2].textContent = tr("unlocked");
+        if (labels[3]) labels[3].textContent = tr("pendingJobs");
+      }
+
+      const featureCards = document.querySelectorAll("#view-home .mx-auto.max-w-7xl article.panel");
+      const featureKeys = [["talentSearch", "talentSearchText"], ["jobPost", "jobPostText"], ["adminAudit", "adminAuditText"]];
+      featureCards.forEach((card, index) => {
+        const keys = featureKeys[index];
+        if (!keys) return;
+        const h = card.querySelector("h3");
+        const p = card.querySelector("p");
+        if (h) h.textContent = tr(keys[0]);
+        if (p) p.textContent = tr(keys[1]);
+      });
+
+      setText("#view-jobs h1", tr("jobsTitle"));
+      setText("#view-jobs h1 + p", tr("jobsDesc"));
+      const createResumeButton = document.querySelector("#view-jobs button[onclick=\"showView('worker')\"]");
+      if (createResumeButton) createResumeButton.innerHTML = `<i class="fa-solid fa-file-arrow-up mr-2"></i>${tr("createResume")}`;
+      const keyword = document.getElementById("job-keyword");
+      if (keyword) keyword.placeholder = tr("searchPlaceholder");
+      const typeFilter = document.getElementById("job-type-filter");
+      if (typeFilter) {
+        typeFilter.options[0].textContent = tr("allTypes");
+        typeFilter.options[1].textContent = tr("typeCare");
+        typeFilter.options[2].textContent = tr("typeFactory");
+        typeFilter.options[3].textContent = tr("typeFood");
+        typeFilter.options[4].textContent = tr("typeConstruction");
+      }
+      const locationFilter = document.getElementById("job-location-filter");
+      if (locationFilter) locationFilter.options[0].textContent = tr("allLocations");
+      const housingFilter = document.getElementById("job-housing-filter");
+      if (housingFilter) {
+        housingFilter.options[0].textContent = tr("housingAny");
+        housingFilter.options[1].textContent = tr("housingProvided");
+        housingFilter.options[2].textContent = tr("housingNot");
+      }
+      const jobSearchButton = document.querySelector("#view-jobs section.panel button[onclick*='renderJobs']");
+      if (jobSearchButton) jobSearchButton.textContent = tr("search");
+      const resultLine = document.querySelector("#job-result-count")?.parentElement;
+      if (resultLine) resultLine.innerHTML = `${tr("resultPrefix")}<span id="job-result-count" class="text-blue-600">${document.getElementById("job-result-count")?.textContent || 0}</span> ${tr("resultSuffix")}`;
+      const badges = document.querySelectorAll("#view-jobs .mb-4 .rounded-full");
+      if (badges[0]) badges[0].textContent = tr("verified");
+      if (badges[1]) badges[1].textContent = tr("transparentSalary");
+      if (badges[2]) badges[2].textContent = tr("oneClickApply");
+
+      setText("#view-worker h1", tr("memberTitle"));
+      setText("#view-worker h1 + p", tr("memberDesc"));
+      setText("#view-employer h1", tr("employerTitle"));
+      setText("#view-employer h1 + p", tr("employerDesc"));
+      setText("#view-admin h1", tr("adminTitle"));
+      setText("#view-admin h1 + p", tr("adminDesc"));
+
+      const pricingTitle = document.querySelector("#pricing-modal h2");
+      if (pricingTitle) pricingTitle.textContent = tr("buyPoints");
+      const pricingPlans = document.querySelectorAll("#pricing-modal article");
+      const planNames = ["basicPlan", "growthPlan", "enterprisePlan"];
+      pricingPlans.forEach((plan, index) => {
+        const name = plan.querySelector("p.text-sm");
+        const button = plan.querySelector("button");
+        if (name) name.textContent = tr(planNames[index]);
+        if (button) button.textContent = tr("buy");
+      });
+
+      renderCandidates();
+      renderJobs();
+    }
+
+    function showView(view) {
+      views.forEach((name) => document.getElementById(`view-${name}`).classList.toggle("active", name === view));
+      document.querySelectorAll(".nav-btn").forEach((button) => button.classList.toggle("active", button.dataset.view === view));
+      history.replaceState(null, "", `#${view}`);
+      if (view === "instant") renderInstantApp();
+      closeMobileMenu();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderCandidates() {
+      const list = document.getElementById("candidate-list");
+      list.innerHTML = candidates.map((person) => {
+        const isUnlocked = unlocked.has(person.id);
+        return `
+          <article class="rounded-xl border border-slate-200 bg-white p-5">
+            <div class="flex items-center gap-4">
+              <img src="${person.avatar}" alt="${person.name}" class="h-16 w-16 rounded-lg object-cover" />
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="text-lg font-black">${person.name}</h3>
+                  <span class="rounded bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">${tr("verified")}</span>
+                </div>
+                <p class="mt-1 text-sm text-slate-500">${person.country} | ${typeLabel(person.job)} | ${person.experience}</p>
+              </div>
+            </div>
+            <div class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+              <div class="rounded-lg bg-slate-50 p-3"><span class="block text-xs font-bold text-slate-500">${tr("location")}</span>${person.location}</div>
+              <div class="rounded-lg bg-slate-50 p-3"><span class="block text-xs font-bold text-slate-500">${tr("language")}</span>${person.languages}</div>
+              <div class="rounded-lg bg-slate-50 p-3 sm:col-span-2"><span class="block text-xs font-bold text-slate-500">${tr("contact")}</span>${isUnlocked ? person.phone : '<span class="select-none blur-sm">0912-XXX-XXX</span>'}</div>
+            </div>
+            <p class="mt-4 rounded-lg bg-slate-50 p-3 text-sm leading-7 text-slate-600">${isUnlocked ? person.summary : tr("lockedSummary")}</p>
+            <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <button onclick="${isUnlocked ? `openResume('${person.id}')` : `unlockResume('${person.id}')`}" class="rounded-lg ${isUnlocked ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-slate-900 hover:bg-slate-700'} px-4 py-3 text-sm font-black text-white">
+                <i class="fa-solid ${isUnlocked ? 'fa-eye' : 'fa-lock'} mr-2"></i>${isUnlocked ? tr("viewFull") : tr("unlockFull")}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderJobs() {
+      const keyword = (document.getElementById("job-keyword")?.value || "").trim().toLowerCase();
+      const type = document.getElementById("job-type-filter")?.value || "";
+      const location = document.getElementById("job-location-filter")?.value || "";
+      const housing = document.getElementById("job-housing-filter")?.value || "";
+      const filtered = jobs.filter((job) => {
+        const text = `${job.title} ${job.company} ${job.type} ${job.location} ${job.salary} ${job.housing} ${job.tags.join(" ")} ${job.description}`.toLowerCase();
+        return (!keyword || text.includes(keyword))
+          && (!type || job.type === type)
+          && (!location || job.location === location)
+          && (!housing || job.housing === housing);
+      });
+
+      const count = document.getElementById("job-result-count");
+      if (count) count.textContent = filtered.length;
+
+      const list = document.getElementById("job-list");
+      if (!list) return;
+      if (!filtered.length) {
+        list.innerHTML = `
+          <div class="panel p-8 text-center">
+            <i class="fa-solid fa-folder-open text-4xl text-slate-300"></i>
+            <p class="mt-3 text-sm font-bold text-slate-500">${tr("noJobs")}</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = filtered.map((job, index) => `
+        <article class="panel p-5">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="rounded bg-blue-50 px-2 py-1 text-xs font-black text-blue-700">${typeLabel(job.type)}</span>
+                <span class="rounded bg-emerald-50 px-2 py-1 text-xs font-black text-emerald-700">${housingLabel(job.housing)}</span>
+                <span class="rounded bg-slate-100 px-2 py-1 text-xs font-black text-slate-600">${job.location}</span>
+              </div>
+              <h2 class="mt-3 text-xl font-black text-slate-950">${job.title}</h2>
+              <p class="mt-1 text-sm font-bold text-slate-500">${job.company}</p>
+              <p class="mt-3 text-sm leading-7 text-slate-600">${job.description}</p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                ${job.tags.map(tag => `<span class="rounded-full bg-slate-50 px-3 py-1 text-xs font-bold text-slate-500 ring-1 ring-slate-200">${tag}</span>`).join("")}
+              </div>
+            </div>
+            <div class="shrink-0 rounded-lg bg-slate-50 p-4 text-left lg:w-56">
+              <p class="text-xs font-bold text-slate-500">${tr("salary")}</p>
+              <p class="mt-1 text-lg font-black text-slate-950">${job.salary}</p>
+              <button onclick="applyJob(${index})" class="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-black text-white hover:bg-blue-500">${tr("apply")}</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function applyJob(index) {
+      const job = jobs[index];
+      if (!job) return;
+      openToast(`${tr("apply")}：${job.title}`);
+      showView("worker");
+    }
+
+    function unlockResume(id) {
+      const person = candidates.find((item) => item.id === id);
+      if (!person) return;
+      if (employerPoints < unlockCost) {
+        openToast(tr("notEnoughPoints"));
+        openPricingModal();
+        return;
+      }
+      employerPoints -= unlockCost;
+      unlockCount += 1;
+      unlocked.add(id);
+      addPointHistory(`${tr("viewFull")}：${person.name}`, `-${unlockCost}P`);
+      syncPoints();
+      renderCandidates();
+      openResume(id);
+    }
+
+    function openResume(id) {
+      const person = candidates.find((item) => item.id === id);
+      if (!person) return;
+      document.getElementById("resume-title").textContent = `${person.name} ${tr("fullResume")}`;
+      document.getElementById("resume-body").innerHTML = `
+        <div class="rounded-lg bg-slate-50 p-4"><p class="text-xs font-bold text-slate-500">${tr("fullResume")}</p><p class="mt-1 font-black">${person.name}</p></div>
+        <div class="rounded-lg bg-slate-50 p-4"><p class="text-xs font-bold text-slate-500">${tr("location")}</p><p class="mt-1 font-black">${person.country}</p></div>
+        <div class="rounded-lg bg-slate-50 p-4"><p class="text-xs font-bold text-slate-500">${tr("navJobs")}</p><p class="mt-1 font-black">${typeLabel(person.job)}</p></div>
+        <div class="rounded-lg bg-slate-50 p-4"><p class="text-xs font-bold text-slate-500">${tr("location")}</p><p class="mt-1 font-black">${person.location}</p></div>
+        <div class="rounded-lg bg-slate-50 p-4"><p class="text-xs font-bold text-slate-500">${tr("contact")}</p><p class="mt-1 font-black text-blue-600">${person.phone}</p></div>
+        <div class="rounded-lg bg-slate-50 p-4"><p class="text-xs font-bold text-slate-500">ID / Document</p><p class="mt-1 font-black">${person.permit}</p></div>
+        <div class="rounded-lg bg-slate-50 p-4 md:col-span-2"><p class="text-xs font-bold text-slate-500">${tr("fullResume")}</p><p class="mt-1 leading-7">${person.summary}</p></div>
+      `;
+      document.getElementById("resume-modal").classList.remove("hidden");
+      document.getElementById("resume-modal").classList.add("flex");
+    }
+
+    function closeResumeModal() {
+      document.getElementById("resume-modal").classList.add("hidden");
+      document.getElementById("resume-modal").classList.remove("flex");
+    }
+
+    function syncPoints() {
+      ["header-points", "hero-points", "metric-points"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = employerPoints;
+      });
+      ["hero-unlocks", "metric-unlocks"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = unlockCount;
+      });
+    }
+
+    function addPointHistory(title, amount) {
+      const history = document.getElementById("point-history");
+      if (!history) return;
+      const item = document.createElement("div");
+      item.className = "rounded-lg border border-slate-200 p-3";
+      item.innerHTML = `<p class="font-black">${title}</p><p class="mt-1 text-slate-500">${amount}</p>`;
+      history.prepend(item);
+    }
+
+    function openPricingModal() {
+      document.getElementById("pricing-modal").classList.remove("hidden");
+      document.getElementById("pricing-modal").classList.add("flex");
+    }
+
+    function closePricingModal() {
+      document.getElementById("pricing-modal").classList.add("hidden");
+      document.getElementById("pricing-modal").classList.remove("flex");
+    }
+
+    function purchasePlan(planName, points) {
+      employerPoints += points;
+      addPointHistory(`購買 ${planName}`, `+${points}P`);
+      syncPoints();
+      closePricingModal();
+      openToast(`${planName} 購買成功，已入帳 ${points}P`);
+    }
+
+    function openPostJobModal() {
+      document.getElementById("job-modal").classList.remove("hidden");
+      document.getElementById("job-modal").classList.add("flex");
+    }
+
+    function closePostJobModal() {
+      document.getElementById("job-modal").classList.add("hidden");
+      document.getElementById("job-modal").classList.remove("flex");
+    }
+
+    function submitJob(event) {
+      event.preventDefault();
+      closePostJobModal();
+      openToast("職缺已送出，等待管理員審核");
+    }
+
+    function openReviewModal(name, type, status) {
+      document.getElementById("review-name").textContent = name;
+      document.getElementById("review-type").textContent = type;
+      document.getElementById("review-status").textContent = status;
+      document.getElementById("review-note").value = "";
+      document.getElementById("review-modal").classList.remove("hidden");
+      document.getElementById("review-modal").classList.add("flex");
+    }
+
+    function closeReviewModal() {
+      document.getElementById("review-modal").classList.add("hidden");
+      document.getElementById("review-modal").classList.remove("flex");
+    }
+
+    function finishReview(result) {
+      const name = document.getElementById("review-name").textContent;
+      closeReviewModal();
+      openToast(`${name}：${result}`);
+    }
+
+    function saveForm(event, message) {
+      event.preventDefault();
+      openToast(message);
+    }
+
+    function openToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.remove("hidden");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.add("hidden"), 2400);
+    }
+
+    function closeMobileMenu() {
+      document.getElementById("mobile-menu").classList.add("hidden");
+    }
+
+    document.getElementById("mobile-menu-btn").addEventListener("click", () => {
+      document.getElementById("mobile-menu").classList.toggle("hidden");
+    });
+
+    const initial = location.hash.replace("#", "");
+    installInstantNav();
+    if (views.includes(initial)) showView(initial);
+    syncPoints();
+    applyLanguage();
+    autoDispatchInstantJob();
+    renderInstantApp();
+  </script>
+</body>
+</html>
